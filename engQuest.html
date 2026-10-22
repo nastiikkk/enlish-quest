@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngQuest - Учи английский по сценариям</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --bg-lighter: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-light);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bg-lighter);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-lighter);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stat i {
+            color: var(--accent);
+        }
+
+        .stat.streak i {
+            color: var(--error);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Home Screen */
+        .home-screen {
+            display: block;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Levels Filter */
+        .levels-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .level-btn {
+            padding: 0.7rem 1.5rem;
+            border: 2px solid var(--bg-lighter);
+            background: transparent;
+            color: var(--text);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .level-btn:hover, .level-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        /* Categories */
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scenario-count {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .difficulty.beginner {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--success);
+        }
+
+        .difficulty.intermediate {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent);
+        }
+
+        .difficulty.advanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        /* Scenario List Screen */
+        .scenario-screen, .chat-screen {
+            display: none;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-lighter);
+            border: none;
+            color: var(--text);
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .scenario-header .category-icon {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+
+        .scenario-header h2 {
+            font-size: 2rem;
+        }
+
+        .scenario-header p {
+            color: var(--text-muted);
+        }
+
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .scenario-card {
+            background: var(--bg-light);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .scenario-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .scenario-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .scenario-info {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .scenario-info span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .scenario-info i {
+            color: var(--primary);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--bg-lighter);
+            border-radius: 2px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        /* Chat Screen */
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-header {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .partner-info h4 {
+            font-size: 1rem;
+        }
+
+        .partner-info span {
+            color: var(--success);
+            font-size: 0.8rem;
+        }
+
+        .chat-progress {
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .chat-progress span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .chat-messages {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem 1.2rem;
+            border-radius: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.partner {
+            background: var(--bg-lighter);
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user {
+            background: var(--primary);
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-text {
+            margin-bottom: 0.3rem;
+        }
+
+        .message-translation {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .message.user .message-translation {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.3rem;
+            padding: 1rem;
+            align-self: flex-start;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 0 0 15px 15px;
+            border-top: 1px solid var(--bg-lighter);
+        }
+
+        .response-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .response-btn {
+            background: var(--bg-lighter);
+            border: 2px solid transparent;
+            color: var(--text);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .response-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .response-btn .translation {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .response-btn.correct {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .response-btn.wrong {
+            border-color: var(--error);
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .input-hint {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .input-hint h5 {
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .input-hint p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Completion Screen */
+        .completion-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .completion-card {
+            background: var(--bg-light);
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 450px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .completion-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .completion-card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .completion-card p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .completion-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .completion-stat {
+            text-align: center;
+        }
+
+        .completion-stat .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .completion-stat .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .completion-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-lighter);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+        }
+
+        /* Vocabulary Panel */
+        .vocab-panel {
+            position: fixed;
+            right: -350px;
+            top: 0;
+            bottom: 0;
+            width: 350px;
+            background: var(--bg-light);
+            padding: 1.5rem;
+            transition: right 0.3s;
+            z-index: 100;
+            overflow-y: auto;
+            border-left: 1px solid var(--bg-lighter);
+        }
+
+        .vocab-panel.open {
+            right: 0;
+        }
+
+        .vocab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .vocab-header h3 {
+            font-size: 1.2rem;
+        }
+
+        .vocab-close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .vocab-word {
+            background: var(--bg-lighter);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+        }
+
+        .vocab-word .word {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .vocab-word .meaning {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .vocab-word .example {
+            font-size: 0.85rem;
+            color: var(--text);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--bg);
+            font-style: italic;
+        }
+
+        .vocab-btn {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s;
+            z-index: 99;
+        }
+
+        .vocab-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .vocab-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-language"></i>
+            <span>EngQuest</span>
+        </div>
+        <div class="user-stats">
+            <div class="stat">
+                <i class="fas fa-star"></i>
+                <span id="xpCount">0 XP</span>
+            </div>
+            <div class="stat streak">
+                <i class="fas fa-fire"></i>
+                <span id="streakCount">0 дней</span>
+            </div>
+            <div class="stat">
+                <i class="fas fa-check-circle"></i>
+                <span id="completedCount">0 сценариев</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Home Screen -->
+        <div class="home-screen" id="homeScreen">
+            <div class="hero">
+                <h1>🎭 Учи английский через реальные ситуации</h1>
+                <p>Практикуй разговорный английский в интерактивных диалогах. Выбери сценарий и начни общение!</p>
+            </div>
+
+            <div class="levels-filter">
+                <button class="level-btn active" data-level="all">Все уровни</button>
+                <button class="level-btn" data-level="beginner">Beginner</button>
+                <button class="level-btn" data-level="intermediate">Intermediate</button>
+                <button class="level-btn" data-level="advanced">Advanced</button>
+            </div>
+
+            <div class="categories" id="categoriesGrid">
+                <!-- Categories will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Scenario List Screen -->
+        <div class="scenario-screen" id="scenarioScreen">
+            <button class="back-btn" onclick="showHome()">
+                <i class="fas fa-arrow-left"></i>
+                Назад к категориям
+            </button>
+
+            <div class="scenario-header" id="scenarioHeader">
+                <!-- Header will be inserted here -->
+            </div>
+
+            <div class="scenarios-grid" id="scenariosGrid">
+                <!-- Scenarios will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div class="chat-screen" id="chatScreen">
+            <button class="back-btn" onclick="showScenarios(currentCategory)">
+                <i class="fas fa-arrow-left"></i>
+                Назад к сценариям
+            </button>
+
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="partner-avatar" id="partnerAvatar">👤</div>
+                    <div class="partner-info">
+                        <h4 id="partnerName">Partner</h4>
+                        <span><i class="fas fa-circle"></i> Online</span>
+                    </div>
+                    <div class="chat-progress">
+                        <span id="progressText">Шаг 1 из 5</span>
+                        <div class="progress-bar" style="width: 150px;">
+                            <div class="progress-fill" id="chatProgressBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be inserted here -->
+                </div>
+
+                <div class="chat-input" id="chatInput">
+                    <div class="response-options" id="responseOptions">
+                        <!-- Response options will be inserted here -->
+                    </div>
+
+                    <div class="input-hint" id="inputHint" style="display: none;">
+                        <h5><i class="fas fa-lightbulb"></i> Подсказка</h5>
+                        <p id="hintText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Overlay -->
+    <div class="completion-overlay" id="completionOverlay">
+        <div class="completion-card">
+            <div class="completion-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2>Отлично! 🎉</h2>
+            <p>Вы успешно завершили сценарий!</p>
+            <div class="completion-stats">
+                <div class="completion-stat">
+                    <div class="value" id="earnedXP">+50</div>
+                    <div class="label">XP заработано</div>
+                </div>
+                <div class="completion-stat">
+                    <div class="value" id="correctAnswers">5/5</div>
+                    <div class="label">Правильных</div>
+                </div>
+            </div>
+            <div class="completion-buttons">
+                <button class="btn btn-secondary" onclick="showHome()">К категориям</button>
+                <button class="btn btn-primary" onclick="restartScenario()">Повторить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vocabulary Panel -->
+    <div class="vocab-panel" id="vocabPanel">
+        <div class="vocab-header">
+            <h3>📚 Словарь урока</h3>
+            <button class="vocab-close" onclick="toggleVocab()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="vocabList">
+            <!-- Vocabulary will be inserted here -->
+        </div>
+    </div>
+
+    <button class="vocab-btn" onclick="toggleVocab()" title="Словарь">
+        <i class="fas fa-book"></i>
+    </button>
+
+    <script>
+        // Data
+        const categories = [
+            {
+                id: 'greetings',
+                title: 'Знакомство и приветствия',
+                description: 'Научись представляться и заводить новые знакомства',
+                icon: '👋',
+                difficulty: 'beginner',
+                scenarios: [
+                    {
+                        id: 'meet-friend',
+                        title: 'Знакомство с другом',
+                        description: 'Познакомься с новым другом на вечеринке',
+                        duration: '5 мин',
+                        phrases: 12,
+                        partner: { name: 'Alex', avatar: '👨' },
+                        vocabulary: [
+                            { word: 'Nice to meet you', meaning: 'Приятно познакомиться', example: 'Nice to meet you, I\'m Sarah.' },
+                            { word: 'What do you do?', meaning: 'Чем занимаешься?', example: 'So, what do you do for a living?' },
+                            { word: 'I\'m from...', meaning: 'Я из...', example: 'I\'m from New York originally.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Hey! I don\'t think we\'ve met. I\'m Alex.', translation: 'Привет! Думаю, мы не знакомы. Я Алекс.' },
+                                options: [
+                                    { text: 'Hi Alex! Nice to meet you. I\'m...', translation: 'Привет, Алекс! Приятно познакомиться. Я...', correct: true },
+                                    { text: 'Hello. Goodbye.', translation: 'Привет. Пока.', correct: false },
+                                    { text: 'I don\'t want to talk.', translation: 'Я не хочу разговаривать.', correct: false }
+                                ],
+                                hint: 'При знакомстве принято представиться и сказать, что рад встрече'
+                            },
+                            {
+                                partner: { text: 'Great to meet you too! So, are you a friend of Mike\'s?', translation: 'Тоже рад знакомству! Так ты друг Майка?' },
+                                options: [
+                                    { text: 'Yes, we work together at the same company.', translation: 'Да, мы работаем вместе в одной компании.', correct: true },
+                                    { text: 'Mike is bad person.', translation: 'Майк плохой человек.', correct: false },
+                                    { text: 'I no understand.', translation: 'Я нет понимать.', correct: false }
+                                ],
+                                hint: 'Расскажи, откуда знаешь хозяина вечеринки'
+                            },
+                            {
+                                partner: { text: 'Oh cool! What do you do there?', translation: 'О, круто! Чем ты там занимаешься?' },
+                                options: [
+                                    { text: 'I\'m a software developer. I build web applications.', translation: 'Я разработчик ПО. Создаю веб-приложения.', correct: true },
+                                    { text: 'I work.', translation: 'Я работаю.', correct: false },
+                                    { text: 'It\'s secret.', translation: 'Это секрет.', correct: false }
+                                ],
+                                hint: 'Расскажи подробнее о своей работе'
+                            },
+                            {
+                                partner: { text: 'That\'s awesome! I\'m actually looking to learn coding. Any tips?', translation: 'Это круто! Я как раз хочу научиться программировать. Есть советы?' },
+                                options: [
+                                    { text: 'Sure! I\'d recommend starting with online courses. Would you like some links?', translation: 'Конечно! Рекомендую начать с онлайн-курсов. Скинуть ссылки?', correct: true },
+                                    { text: 'No tips for you.', translation: 'Никаких советов для тебя.', correct: false },
+                                    { text: 'Coding is very hard, don\'t try.', translation: 'Программирование очень сложное, не пробуй.', correct: false }
+                                ],
+                                hint: 'Будь дружелюбным и предложи помощь'
+                            },
+                            {
+                                partner: { text: 'That would be great! Here, let me give you my number.', translation: 'Было бы здорово! Давай я дам тебе свой номер.' },
+                                options: [
+                                    { text: 'Perfect! It was really nice talking to you, Alex!', translation: 'Отлично! Было очень приятно пообщаться, Алекс!', correct: true },
+                                    { text: 'OK bye.', translation: 'Ок пока.', correct: false },
+                                    { text: 'I don\'t need your number.', translation: 'Мне не нужен твой номер.', correct: false }
+                                ],
+                                hint: 'Заверши разговор вежливо и позитивно'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'job-interview-intro',
+                        title: 'Начало собеседования',
+                        description: 'Первые минуты на собеседовании',
+                        duration: '7 мин',
+                        phrases: 15,
+                        partner: { name: 'Ms. Johnson', avatar: '👩‍💼' },
+                        vocabulary: [
+                            { word: 'I applied for', meaning: 'Я подал заявку на', example: 'I applied for the marketing position.' },
+                            { word: 'Tell me about yourself', meaning: 'Расскажите о себе', example: 'So, tell me a little about yourself.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Good morning! Please, have a seat. I\'m Ms. Johnson, the HR manager.', translation: 'Доброе утро! Присаживайтесь. Я мисс Джонсон, HR-менеджер.' },
+                                options: [
+                                    { text: 'Good morning, Ms. Johnson. Thank you for having me today.', translation: 'Доброе утро, мисс Джонсон. Спасибо, что пригласили меня.', correct: true },
+                                    { text: 'Hi. Nice office.', translation: 'Привет. Хороший офис.', correct: false },
+                                    { text: 'Morning. Let\'s start.', translation: 'Утро. Давайте начнём.', correct: false }
+                                ],
+                                hint: 'На собеседовании важно быть вежливым и профессиональным'
+                            },
+                            {
+                                partner: { text: 'So, tell me a little about yourself and why you\'re interested in this position.', translation: 'Расскажите немного о себе и почему вас интересует эта позиция.' },
+                                options: [
+                                    { text: 'I have 3 years of experience in marketing. I\'m passionate about digital campaigns and I believe this role aligns perfectly with my skills.', translation: 'У меня 3 года опыта в маркетинге. Я увлечён цифровыми кампаниями и считаю, что эта роль идеально соответствует моим навыкам.', correct: true },
+                                    { text: 'I need money.', translation: 'Мне нужны деньги.', correct: false },
+                                    { text: 'I don\'t know much about the position.', translation: 'Я мало знаю о позиции.', correct: false }
+                                ],
+                                hint: 'Кратко расскажи о своём опыте и мотивации'
+                            },
+                            {
+                                partner: { text: 'That sounds great. What would you say is your greatest strength?', translation: 'Звучит отлично. Какую бы вы назвали свою главную сильную сторону?' },
+                                options: [
+                                    { text: 'I\'m very detail-oriented and I work well under pressure. I always meet my deadlines.', translation: 'Я очень внимателен к деталям и хорошо работаю под давлением. Всегда соблюдаю сроки.', correct: true },
+                                    { text: 'I\'m perfect at everything.', translation: 'Я идеален во всём.', correct: false },
+                                    { text: 'I don\'t have strengths.', translation: 'У меня нет сильных сторон.', correct: false }
+                                ],
+                                hint: 'Назови конкретную сильную сторону с примером'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'travel',
+                title: 'Путешествия',
+                description: 'Всё для комфортных поездок за границу',
+                icon: '✈️',
+                difficulty: 'intermediate',
+                scenarios: [
+                    {
+                        id: 'buy-ticket',
+                        title: 'Покупка билета',
+                        description: 'Купи билет на поезд или автобус',
+                        duration: '6 мин',
+                        phrases: 14,
+                        partner: { name: 'Ticket Agent', avatar: '🧑‍✈️' },
+                        vocabulary: [
+                            { word: 'One-way ticket', meaning: 'Билет в одну сторону', example: 'I\'d like a one-way ticket to London.' },
+                            { word: 'Round-trip', meaning: 'Туда и обратно', example: 'A round-trip ticket, please.' },
+                            { word: 'Platform', meaning: 'Платформа', example: 'The train leaves from platform 5.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Hello! How can I help you today?', translation: 'Здравствуйте! Чем могу помочь?' },
+                                options: [
+                                    { text: 'Hi! I\'d like to buy a ticket to London, please.', translation: 'Привет! Я хотел бы купить билет до Лондона, пожалуйста.', correct: true },
+                                    { text: 'Ticket!', translation: 'Билет!', correct: false },
+                                    { text: 'Where is London?', translation: 'Где Лондон?', correct: false }
+                                ],
+                                hint: 'Вежливо попроси билет, указав пункт назначения'
+                            },
+                            {
+                                partner: { text: 'Certainly! Would you like a one-way or round-trip ticket?', translation: 'Конечно! Вам билет в одну сторону или туда-обратно?' },
+                                options: [
+                                    { text: 'Round-trip, please. I\'ll be returning next Monday.', translation: 'Туда-обратно, пожалуйста. Я вернусь в следующий понедельник.', correct: true },
+                                    { text: 'Both.', translation: 'Оба.', correct: false },
+                                    { text: 'I don\'t understand.', translation: 'Я не понимаю.', correct: false }
+                                ],
+                                hint: 'Уточни тип билета и дату возвращения'
+                            },
+                            {
+                                partner: { text: 'Perfect. Would you prefer first class or standard class?', translation: 'Отлично. Вы предпочитаете первый класс или стандартный?' },
+                                options: [
+                                    { text: 'Standard class will be fine. How much is it?', translation: 'Стандартный подойдёт. Сколько это стоит?', correct: true },
+                                    { text: 'The best one.', translation: 'Самый лучший.', correct: false },
+                                    { text: 'Free ticket please.', translation: 'Бесплатный билет пожалуйста.', correct: false }
+                                ],
+                                hint: 'Выбери класс и спроси о цене'
+                            },
+                            {
+                                partner: { text: 'That\'ll be £45. Cash or card?', translation: 'Это будет £45. Наличные или карта?' },
+                                options: [
+                                    { text: 'I\'ll pay by card, please.', translation: 'Я заплачу картой, пожалуйста.', correct: true },
+                                    { text: 'Too expensive!', translation: 'Слишком дорого!', correct: false },
+                                    { text: 'No money.', translation: 'Нет денег.', correct: false }
+                                ],
+                                hint: 'Укажи способ оплаты'
+                            },
+                            {
+                                partner: { text: 'Here\'s your ticket. The train departs from platform 3 at 10:15. Have a good trip!', translation: 'Вот ваш билет. Поезд отправляется с платформы 3 в 10:15. Хорошей поездки!' },
+                                options: [
+                                    { text: 'Thank you so much! Have a nice day!', translation: 'Большое спасибо! Хорошего дня!', correct: true },
+                                    { text: 'OK.', translation: 'Ок.', correct: false },
+                                    { text: 'Where is platform?', translation: 'Где платформа?', correct: false }
+                                ],
+                                hint: 'Поблагодари и попрощайся'
+                            }
+                        ]
+                    },
+                    {
+                        id: 'hotel-checkin',
+                        title: 'Заселение в отель',
+                        description: 'Заселись в отель без проблем',
+                        duration: '8 мин',
+                        phrases: 18,
+                        partner: { name: 'Receptionist', avatar: '👨‍💼' },
+                        vocabulary: [
+                            { word: 'Reservation', meaning: 'Бронирование', example: 'I have a reservation under Smith.' },
+                            { word: 'Check-in/Check-out', meaning: 'Заезд/Выезд', example: 'What time is check-out?' },
+                            { word: 'Room key', meaning: 'Ключ от номера', example: 'Here\'s your room key.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Good evening! Welcome to Grand Hotel. Do you have a reservation?', translation: 'Добрый вечер! Добро пожаловать в Гранд Отель. У вас есть бронирование?' },
+                                options: [
+                                    { text: 'Good evening! Yes, I have a reservation under the name Smith.', translation: 'Добрый вечер! Да, у меня бронь на имя Смит.', correct: true },
+                                    { text: 'Room please.', translation: 'Комнату пожалуйста.', correct: false },
+                                    { text: 'Maybe.', translation: 'Может быть.', correct: false }
+                                ],
+                                hint: 'Подтверди бронирование, назвав свою фамилию'
+                            },
+                            {
+                                partner: { text: 'Let me check... Yes, I found it. A double room for 3 nights, correct?', translation: 'Дайте проверю... Да, нашла. Двухместный номер на 3 ночи, верно?' },
+                                options: [
+                                    { text: 'That\'s correct. Could I also request a room with a city view?', translation: 'Верно. Можно ли попросить номер с видом на город?', correct: true },
+                                    { text: 'Yes.', translation: 'Да.', correct: false },
+                                    { text: 'I want bigger room for free.', translation: 'Хочу комнату побольше бесплатно.', correct: false }
+                                ],
+                                hint: 'Подтверди детали и можешь попросить о дополнительных услугах'
+                            },
+                            {
+                                partner: { text: 'I\'ll see what\'s available. May I have your ID and credit card, please?', translation: 'Посмотрю, что есть. Могу я попросить ваш паспорт и кредитную карту?' },
+                                options: [
+                                    { text: 'Of course, here you go. Do you need me to fill out any forms?', translation: 'Конечно, вот пожалуйста. Нужно заполнить какие-то формы?', correct: true },
+                                    { text: 'Why you need this?', translation: 'Зачем вам это?', correct: false },
+                                    { text: 'No card.', translation: 'Нет карты.', correct: false }
+                                ],
+                                hint: 'Предоставь документы и уточни про регистрацию'
+                            },
+                            {
+                                partner: { text: 'Great news! We have a city view room available. Your room is 507 on the 5th floor. Here\'s your key.', translation: 'Отличные новости! Есть номер с видом на город. Ваш номер 507 на 5 этаже. Вот ваш ключ.' },
+                                options: [
+                                    { text: 'Wonderful! What time is breakfast served and where is the restaurant?', translation: 'Замечательно! Во сколько завтрак и где находится ресторан?', correct: true },
+                                    { text: 'OK thanks.', translation: 'Ок спасибо.', correct: false },
+                                    { text: 'I want different room.', translation: 'Хочу другой номер.', correct: false }
+                                ],
+                                hint: 'Поблагодари и уточни важную информацию об отеле'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'restaurant',
+                title: 'В ресторане',
+                description: 'Заказ еды и общение с официантами',
+                icon: '🍽️',
+                difficulty: 'beginner',
+                scenarios: [
+                    {
+                        id: 'order-food',
+                        title: 'Заказ еды',
+                        description: 'Закажи обед в ресторане',
+                        duration: '7 мин',
+                        phrases: 16,
+                        partner: { name: 'Waiter', avatar: '🧑‍🍳' },
+                        vocabulary: [
+                            { word: 'I\'d like to order', meaning: 'Я бы хотел заказать', example: 'I\'d like to order the steak, please.' },
+                            { word: 'What do you recommend?', meaning: 'Что вы порекомендуете?', example: 'What do you recommend for dessert?' },
+                            { word: 'The bill, please', meaning: 'Счёт, пожалуйста', example: 'Could we have the bill, please?' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Good evening! Welcome to La Bella. Table for how many?', translation: 'Добрый вечер! Добро пожаловать в Ла Белла. Столик на сколько человек?' },
+                                options: [
+                                    { text: 'Good evening! A table for two, please.', translation: 'Добрый вечер! Столик на двоих, пожалуйста.', correct: true },
+                                    { text: 'Two.', translation: 'Два.', correct: false },
+                                    { text: 'Food please.', translation: 'Еду пожалуйста.', correct: false }
+                                ],
+                                hint: 'Вежливо попроси столик, указав количество гостей'
+                            },
+                            {
+                                partner: { text: 'Right this way. Here are your menus. Can I start you off with some drinks?', translation: 'Прошу сюда. Вот ваше меню. Могу я начать с напитков?' },
+                                options: [
+                                    { text: 'Yes, please. Could I have a glass of white wine? And a sparkling water.', translation: 'Да, пожалуйста. Можно бокал белого вина? И газированную воду.', correct: true },
+                                    { text: 'Water.', translation: 'Воду.', correct: false },
+                                    { text: 'No drinks, only food.', translation: 'Никаких напитков, только еду.', correct: false }
+                                ],
+                                hint: 'Закажи напитки вежливо, используя "Could I have..."'
+                            },
+                            {
+                                partner: { text: 'Excellent choice. Are you ready to order, or do you need a few more minutes?', translation: 'Отличный выбор. Вы готовы сделать заказ или нужно ещё несколько минут?' },
+                                options: [
+                                    { text: 'I think we\'re ready. What do you recommend as a main course?', translation: 'Думаю, мы готовы. Что порекомендуете в качестве основного блюда?', correct: true },
+                                    { text: 'Give us everything.', translation: 'Дайте нам всё.', correct: false },
+                                    { text: 'I don\'t know what I want.', translation: 'Не знаю, что хочу.', correct: false }
+                                ],
+                                hint: 'Попроси рекомендацию у официанта'
+                            },
+                            {
+                                partner: { text: 'Our chef\'s special today is grilled salmon with vegetables. It\'s very popular.', translation: 'Фирменное блюдо шеф-повара сегодня — лосось на гриле с овощами. Очень популярно.' },
+                                options: [
+                                    { text: 'That sounds delicious! I\'ll have that. And my friend will have the pasta carbonara.', translation: 'Звучит вкусно! Я возьму это. А мой друг возьмёт пасту карбонара.', correct: true },
+                                    { text: 'OK, give me fish.', translation: 'Ок, дайте рыбу.', correct: false },
+                                    { text: 'I don\'t like salmon.', translation: 'Я не люблю лосось.', correct: false }
+                                ],
+                                hint: 'Сделай заказ для себя и друга'
+                            },
+                            {
+                                partner: { text: 'Here you are. Enjoy your meal! Is there anything else I can get you?', translation: 'Вот, пожалуйста. Приятного аппетита! Могу ли я ещё что-нибудь принести?' },
+                                options: [
+                                    { text: 'This looks amazing, thank you! We\'re good for now. We\'ll let you know if we need anything.', translation: 'Выглядит потрясающе, спасибо! Пока всё хорошо. Дадим знать, если что-то понадобится.', correct: true },
+                                    { text: 'More food.', translation: 'Ещё еды.', correct: false },
+                                    { text: 'It\'s OK.', translation: 'Нормально.', correct: false }
+                                ],
+                                hint: 'Поблагодари и вежливо ответь'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'shopping',
+                title: 'Шоппинг',
+                description: 'Покупки в магазинах и торговых центрах',
+                icon: '🛍️',
+                difficulty: 'beginner',
+                scenarios: [
+                    {
+                        id: 'buy-clothes',
+                        title: 'Покупка одежды',
+                        description: 'Выбери и купи одежду в магазине',
+                        duration: '8 мин',
+                        phrases: 20,
+                        partner: { name: 'Shop Assistant', avatar: '👩‍💼' },
+                        vocabulary: [
+                            { word: 'Do you have this in...?', meaning: 'Это есть в...?', example: 'Do you have this in size medium?' },
+                            { word: 'Fitting room', meaning: 'Примерочная', example: 'Where is the fitting room?' },
+                            { word: 'It fits perfectly', meaning: 'Идеально сидит', example: 'It fits perfectly, I\'ll take it.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Hi there! Let me know if you need any help finding something.', translation: 'Привет! Дайте знать, если нужна помощь в поиске чего-либо.' },
+                                options: [
+                                    { text: 'Thanks! Actually, I\'m looking for a blue jacket. Do you have any?', translation: 'Спасибо! Вообще-то я ищу синюю куртку. У вас есть?', correct: true },
+                                    { text: 'Just looking.', translation: 'Просто смотрю.', correct: false },
+                                    { text: 'Give me jacket.', translation: 'Дайте куртку.', correct: false }
+                                ],
+                                hint: 'Опиши, что ты ищешь'
+                            },
+                            {
+                                partner: { text: 'Of course! We have several styles. What size are you?', translation: 'Конечно! У нас есть несколько фасонов. Какой у вас размер?' },
+                                options: [
+                                    { text: 'I usually wear a medium. Could I try on that one by the window?', translation: 'Обычно я ношу M. Можно примерить ту, что у окна?', correct: true },
+                                    { text: 'Big size.', translation: 'Большой размер.', correct: false },
+                                    { text: 'I don\'t know my size.', translation: 'Не знаю свой размер.', correct: false }
+                                ],
+                                hint: 'Назови свой размер и попроси примерить'
+                            },
+                            {
+                                partner: { text: 'Sure! The fitting rooms are right around the corner. Let me know how it goes!', translation: 'Конечно! Примерочные за углом. Дайте знать, как получится!' },
+                                options: [
+                                    { text: 'Thank you! Oh, this is a bit tight. Do you have this in a large?', translation: 'Спасибо! Ох, это немного тесновато. Есть такая же, но L?', correct: true },
+                                    { text: 'Bad jacket.', translation: 'Плохая куртка.', correct: false },
+                                    { text: 'Where is the exit?', translation: 'Где выход?', correct: false }
+                                ],
+                                hint: 'Опиши проблему и попроси другой размер'
+                            },
+                            {
+                                partner: { text: 'Here\'s the large. How does this one feel?', translation: 'Вот L. Как эта?' },
+                                options: [
+                                    { text: 'This fits perfectly! How much is it?', translation: 'Идеально сидит! Сколько она стоит?', correct: true },
+                                    { text: 'Okay.', translation: 'Нормально.', correct: false },
+                                    { text: 'Too expensive probably.', translation: 'Наверное слишком дорого.', correct: false }
+                                ],
+                                hint: 'Прокомментируй посадку и спроси о цене'
+                            },
+                            {
+                                partner: { text: 'It\'s $89. We also have a 20% discount today. Would you like to get it?', translation: 'Она стоит $89. Сегодня также скидка 20%. Хотите её взять?' },
+                                options: [
+                                    { text: 'That\'s a great deal! Yes, I\'ll take it. Can I pay by card?', translation: 'Отличная сделка! Да, я её беру. Можно оплатить картой?', correct: true },
+                                    { text: 'Give me bigger discount.', translation: 'Дайте скидку больше.', correct: false },
+                                    { text: 'Maybe later.', translation: 'Может позже.', correct: false }
+                                ],
+                                hint: 'Прими решение и уточни способ оплаты'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'business',
+                title: 'Деловое общение',
+                description: 'Английский для работы и бизнеса',
+                icon: '💼',
+                difficulty: 'advanced',
+                scenarios: [
+                    {
+                        id: 'business-meeting',
+                        title: 'Деловая встреча',
+                        description: 'Веди переговоры на английском',
+                        duration: '10 мин',
+                        phrases: 25,
+                        partner: { name: 'Mr. Williams', avatar: '👨‍💼' },
+                        vocabulary: [
+                            { word: 'I\'d like to discuss', meaning: 'Я бы хотел обсудить', example: 'I\'d like to discuss our partnership.' },
+                            { word: 'Let\'s schedule', meaning: 'Давайте назначим', example: 'Let\'s schedule a follow-up meeting.' },
+                            { word: 'Moving forward', meaning: 'В дальнейшем', example: 'Moving forward, we should focus on growth.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Thank you for coming in today. Shall we get started?', translation: 'Спасибо, что пришли сегодня. Начнём?' },
+                                options: [
+                                    { text: 'Thank you for having me. Yes, I\'m looking forward to discussing the proposal.', translation: 'Спасибо, что пригласили. Да, с нетерпением жду обсуждения предложения.', correct: true },
+                                    { text: 'OK let\'s go.', translation: 'Ок, поехали.', correct: false },
+                                    { text: 'I\'m very busy, be quick.', translation: 'Я очень занят, давайте быстрее.', correct: false }
+                                ],
+                                hint: 'Будь профессиональным и покажи заинтересованность'
+                            },
+                            {
+                                partner: { text: 'I\'ve reviewed your proposal. The numbers look promising, but I have some concerns about the timeline.', translation: 'Я изучил ваше предложение. Цифры выглядят многообещающе, но у меня есть сомнения насчёт сроков.' },
+                                options: [
+                                    { text: 'I understand your concerns. We can definitely be flexible with the timeline. What would work better for your team?', translation: 'Понимаю ваши опасения. Мы определённо можем быть гибкими со сроками. Что лучше подойдёт вашей команде?', correct: true },
+                                    { text: 'Timeline is final.', translation: 'Сроки окончательные.', correct: false },
+                                    { text: 'What concerns?', translation: 'Какие сомнения?', correct: false }
+                                ],
+                                hint: 'Покажи готовность к компромиссу'
+                            },
+                            {
+                                partner: { text: 'If we could extend the first phase by two weeks, that would give us more confidence.', translation: 'Если бы мы могли продлить первую фазу на две недели, это дало бы нам больше уверенности.' },
+                                options: [
+                                    { text: 'That\'s reasonable. I\'ll discuss it with my team, but I believe we can accommodate that. Shall we move on to the budget?', translation: 'Это разумно. Обсужу с командой, но думаю, мы можем это учесть. Перейдём к бюджету?', correct: true },
+                                    { text: 'No, impossible.', translation: 'Нет, невозможно.', correct: false },
+                                    { text: 'Two weeks is too much.', translation: 'Две недели это слишком много.', correct: false }
+                                ],
+                                hint: 'Прими предложение и продвинь переговоры вперёд'
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'emergency',
+                title: 'Экстренные ситуации',
+                description: 'Как справиться с непредвиденными обстоятельствами',
+                icon: '🚨',
+                difficulty: 'intermediate',
+                scenarios: [
+                    {
+                        id: 'doctor-visit',
+                        title: 'Визит к врачу',
+                        description: 'Опиши симптомы и пойми рекомендации врача',
+                        duration: '8 мин',
+                        phrases: 18,
+                        partner: { name: 'Dr. Chen', avatar: '👨‍⚕️' },
+                        vocabulary: [
+                            { word: 'I\'ve been feeling', meaning: 'Я чувствую себя', example: 'I\'ve been feeling dizzy lately.' },
+                            { word: 'Symptoms', meaning: 'Симптомы', example: 'What are your symptoms?' },
+                            { word: 'Prescription', meaning: 'Рецепт', example: 'I\'ll write you a prescription.' }
+                        ],
+                        dialog: [
+                            {
+                                partner: { text: 'Good morning. What brings you in today?', translation: 'Доброе утро. Что вас беспокоит?' },
+                                options: [
+                                    { text: 'Good morning, doctor. I\'ve been having a bad headache and fever for the past three days.', translation: 'Доброе утро, доктор. У меня сильная головная боль и температура последние три дня.', correct: true },
+                                    { text: 'I feel bad.', translation: 'Мне плохо.', correct: false },
+                                    { text: 'Give me medicine.', translation: 'Дайте лекарство.', correct: false }
+                                ],
+                                hint: 'Опиши симптомы подробно, включая продолжительность'
+                            },
+                            {
+                                partner: { text: 'I see. Have you experienced any other symptoms? Cough, sore throat, fatigue?', translation: 'Понятно. Были ли другие симптомы? Кашель, боль в горле, усталость?' },
+                                options: [
+                                    { text: 'Yes, I\'ve also had a sore throat and I feel very tired. But no cough.', translation: 'Да, ещё болит горло и я чувствую сильную усталость. Но кашля нет.', correct: true },
+                                    { text: 'All of them.', translation: 'Всё это.', correct: false },
+                                    { text: 'I don\'t remember.', translation: 'Не помню.', correct: false }
+                                ],
+                                hint: 'Перечисли все симптомы точно'
+                            },
+                            {
+                                partner: { text: 'It sounds like you might have the flu. I\'ll prescribe some medication. Make sure to rest and drink plenty of fluids.', translation: 'Похоже на грипп. Выпишу лекарства. Обязательно отдыхайте и пейте много жидкости.' },
+                                options: [
+                                    { text: 'Thank you, doctor. How long should I take the medication, and when should I come back if I don\'t feel better?', translation: 'Спасибо, доктор. Как долго принимать лекарства и когда вернуться, если не станет лучше?', correct: true },
+                                    { text: 'OK bye.', translation: 'Ок, пока.', correct: false },
+                                    { text: 'I don\'t want medicine.', translation: 'Не хочу лекарства.', correct: false }
+                                ],
+                                hint: 'Уточни важные детали лечения'
+                            }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // State
+        let currentCategory = null;
+        let currentScenario = null;
+        let currentStep = 0;
+        let correctCount = 0;
+        let userXP = parseInt(localStorage.getItem('userXP')) || 0;
+        let userStreak = parseInt(localStorage.getItem('userStreak')) || 0;
+        let completedScenarios = JSON.parse(localStorage.getItem('completedScenarios')) || [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+            renderCategories();
+            setupLevelFilters();
+        });
+
+        function updateStats() {
+            document.getElementById('xpCount').textContent = `${userXP} XP`;
+            document.getElementById('streakCount').textContent = `${userStreak} дней`;
+            document.getElementById('completedCount').textContent = `${completedScenarios.length} сценариев`;
+        }
+
+        function setupLevelFilters() {
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderCategories(btn.dataset.level);
+                });
+            });
+        }
+
+        function renderCategories(filter = 'all') {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = '';
+            
+            const filtered = filter === 'all' 
+                ? categories 
+                : categories.filter(c => c.difficulty === filter);
+            
+            filtered.forEach(category => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.onclick = () => showScenarios(category.id);
+                
+                const difficultyLabels = {
+                    beginner: 'Начинающий',
+                    intermediate: 'Средний',
+                    advanced: 'Продвинутый'
+                };
+                
+                card.innerHTML = `
+                    <div class="category-icon">${category.icon}</div>
+                    <h3>${category.title}</h3>
+                    <p>${category.description}</p>
+                    <div class="category-meta">
+                        <span class="scenario-count">${category.scenarios.length} сценариев</span>
+                        <span class="difficulty ${category.difficulty}">${difficultyLabels[category.difficulty]}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showHome() {
+            document.getElementById('homeScreen').style.display = 'block';
+            document.getElementById('scenarioScreen').style.display = 'none';
+            document.getElementById('chatScreen').style.display = 'none';
+        }
+
+        function showScenarios(categoryId) {
+            currentCategory = categoryId;
+            const category = categories.find(c => c.id === categoryId);
+            
+            document.getElementById('homeScreen').style.display = 'none';
+            document.getElementById('scenarioScreen').style.display = 'block';
+            document.getElementById('chatScreen').style.display = 'none';
+            
+            document.getElementById('scenarioHeader').innerHTML = `
+                <div class="category-icon">${category.icon}</div>
+                <div>
+                    <h2>${category.title}</h2>
+                    <p>${category.description}</p>
+                </div>
+            `;
+            
+            const grid = document.getElementById('scenariosGrid');
+            grid.innerHTML = '';
+            
+            category.scenarios.forEach(scenario => {
+                const isCompleted = completedScenarios.includes(scenario.id);
+                const card = document.createElement('div');
+                card.className = 'scenario-card';
+                card.onclick = () => startScenario(categoryId, scenario.id);
+                
+                card.innerHTML = `
+                    <h4>${isCompleted ? '✅ ' : ''}${scenario.title}</h4>
+                    <p>${scenario.description}</p>
+                    <div class="scenario-info">
+                        <span><i class="fas fa-clock"></i> ${scenario.duration}</span>
+                        <span><i class="fas fa-comment"></i> ${scenario.phrases} фраз</span>
+                        <span><i class="fas fa-user"></i> ${scenario.partner.name}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${isCompleted ? '100' : '0'}%"></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function startScenario(categoryId, scenarioId) {
+            const category = categories.find(c => c.id === categoryId);
+            currentScenario = category.scenarios.find(s => s.id === scenarioId);
+            currentStep = 0;
+            correctCount = 0;
+            
+            document.getElementById('scenarioScreen').style.display = 'none';
+            document.getElementById('chatScreen').style.display = 'block';
+            
+            document.getElementById('partnerAvatar').textContent = currentScenario.partner.avatar;
+            document.getElementById('partnerName').textContent = currentScenario.partner.name;
+            
+            document.getElementById('chatMessages').innerHTML = '';
+            
+            renderVocabulary();
+            nextStep();
+        }
+
+        function renderVocabulary() {
+            const list = document.getElementById('vocabList');
+            list.innerHTML = '';
+            
+            currentScenario.vocabulary.forEach(word => {
+                const div = document.createElement('div');
+                div.className = 'vocab-word';
+                div.innerHTML = `
+                    <div class="word">${word.word}</div>
+                    <div class="meaning">${word.meaning}</div>
+                    <div class="example">"${word.example}"</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function nextStep() {
+            if (currentStep >= currentScenario.dialog.length) {
+                completeScenario();
+                return;
+            }
+            
+            const step = currentScenario.dialog[currentStep];
+            const messages = document.getElementById('chatMessages');
+            
+            // Update progress
+            const progress = ((currentStep + 1) / currentScenario.dialog.length) * 100;
+            document.getElementById('progressText').textContent = 
+                `Шаг ${currentStep + 1} из ${currentScenario.dialog.length}`;
+            document.getElementById('chatProgressBar').style.width = `${progress}%`;
+            
+            // Show typing indicator
+            const typing = document.createElement('div');
+            typing.className = 'typing-indicator';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            messages.appendChild(typing);
+            messages.scrollTop = messages.scrollHeight;
+            
+            // Show partner message after delay
+            setTimeout(() => {
+                typing.remove();
+                
+                const partnerMsg = document.createElement('div');
+                partnerMsg.className = 'message partner';
+                partnerMsg.innerHTML = `
+                    <div class="message-text">${step.partner.text}</div>
+                    <div class="message-translation">${step.partner.translation}</div>
+                `;
+                messages.appendChild(partnerMsg);
+                messages.scrollTop = messages.scrollHeight;
+                
+                // Show response options
+                renderResponseOptions(step);
+            }, 1500);
+        }
+
+        function renderResponseOptions(step) {
+            const optionsDiv = document.getElementById('responseOptions');
+            const hintDiv = document.getElementById('inputHint');
+            
+            document.getElementById('hintText').textContent = step.hint;
+            hintDiv.style.display = 'block';
+            
+            optionsDiv.innerHTML = '';
+            const shuffled = [...step.options].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'response-btn';
+                btn.innerHTML = `
+                    ${option.text}
+                    <span class="translation">${option.translation}</span>
+                `;
+                btn.onclick = () => selectResponse(option, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function selectResponse(option, btn) {
+            const allBtns = document.querySelectorAll('.response-btn');
+            allBtns.forEach(b => b.disabled = true);
+            
+            if (option.correct) {
+                btn.classList.add('correct');
+                correctCount++;
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct answer
+                allBtns.forEach(b => {
+                    if (b.textContent.includes(currentScenario.dialog[currentStep].options.find(o => o.correct).text)) {
+                        b.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Add user message
+            setTimeout(() => {
+                const messages = document.getElementById('chatMessages');
+                const userMsg = document.createElement('div');
+                userMsg.className = 'message user';
+                userMsg.innerHTML = `
+                    <div class="message-text">${option.text}</div>
+                    <div class="message-translation">${option.translation}</div>
+                `;
+                messages.appendChild(userMsg);
+                messages.scrollTop = messages.scrollHeight;
+                
+                document.getElementById('inputHint').style.display = 'none';
+                
+                currentStep++;
+                setTimeout(nextStep, 1000);
+            }, 1000);
+        }
+
+        function completeScenario() {
+            const earnedXP = correctCount * 10;
+            userXP += earnedXP;
+            localStorage.setItem('userXP', userXP);
+            
+            if (!completedScenarios.includes(currentScenario.id)) {
+                completedScenarios.push(currentScenario.id);
+                localStorage.setItem('completedScenarios', JSON.stringify(completedScenarios));
+                
+                // Update streak
+                const lastVisit = localStorage.getItem('lastVisit');
+                const today = new Date().toDateString();
+                if (lastVisit !== today) {
+                    userStreak++;
+                    localStorage.setItem('userStreak', userStreak);
+                    localStorage.setItem('lastVisit', today);
+                }
+            }
+            
+            updateStats();
+            
+            document.getElementById('earnedXP').textContent = `+${earnedXP}`;
+            document.getElementById('correctAnswers').textContent = 
+                `${correctCount}/${currentScenario.dialog.length}`;
+            document.getElementById('completionOverlay').style.display = 'flex';
+        }
+
+        function restartScenario() {
+            document.getElementById('completionOverlay').style.display = 'none';
+            startScenario(currentCategory, currentScenario.id);
+        }
+
+        function toggleVocab() {
+            document.getElementById('vocabPanel').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
